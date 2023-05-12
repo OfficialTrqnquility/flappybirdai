@@ -5,7 +5,7 @@ import pickle
 import visualize
 
 def runGame():
-    Game()
+    Game().run()
 
 
 def runTest():
@@ -34,13 +34,13 @@ def train():
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_path)
 
-    p = neat.Checkpointer.restore_checkpoint("checkpoints/neat-checkpoint-20")
-    #p = neat.Population(config)
+    #p = neat.Checkpointer.restore_checkpoint("checkpoints/neat-checkpoint-20")
+    p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     checkpointer = neat.Checkpointer(generation_interval=1, filename_prefix="checkpoints/neat-checkpoint-")
-    p.add_reporter(checkpointer)
+    #p.add_reporter(checkpointer)
 
     winner = p.run(eval_genomes)
 
@@ -68,4 +68,4 @@ def eval_genomes(genomes, config):
 
 
 if __name__ == '__main__':
-    runTest()
+    runGame()

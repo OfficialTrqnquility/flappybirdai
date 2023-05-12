@@ -20,7 +20,8 @@ class Game:
         self.ground_x = 0
 
         self.pipe_gap = 75
-        self.pipe_frequency = 1500
+        self.pipe_frequency = 90
+        self.ticks_till_next_pipe = 0
 
         self.default_bird_x = 100
         self.default_bird_y = 300
@@ -94,13 +95,15 @@ class Game:
                     self.FPS = 300
                 if event.key == pygame.K_F3:
                     self.FPS = 500
+                if event.key == pygame.K_F4:
+                    self.FPS = 5000
                 if event.key == pygame.K_q:
 
                     for bird in self.bird_group:
                         bird.alive = False
 
             if not self.training:
-                if self.nets:
+                if not self.nets:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
                             jump = True
@@ -108,15 +111,12 @@ class Game:
         self.bird_group.update(jump, self.pipe_group)
 
         # Compute Pipes and Score
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_pipe > self.pipe_frequency or (current_time < 3000 and not self.pipe_group):
-
-            # Score computation
-
-            if current_time > 3000:
+        self.ticks_till_next_pipe -= 1
+        if self.ticks_till_next_pipe <= 0:
+            self.ticks_till_next_pipe = self.pipe_frequency
+            if pygame.time.get_ticks() > 3000 / self.FPS / 60:
                 self.score += 1
 
-            self.last_pipe = current_time
             pipe_height = random.randint(-100, 100)
             top_pipe = Pipe(self.display_width, int(self.display_height / 2) + pipe_height, True, self.pipe_gap,
                             self.pipe_image)
